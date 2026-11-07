@@ -1,50 +1,88 @@
-# Standard-Poor-500-Stock-Market-Trend-Risk-Prediction-
-# Standard & Poor 500 Stock Market Trend & Risk Prediction Using Machine Learning
+Standard & Poor 500 Stock Market Trend & Risk Prediction Using Machine Learning
+Project Overview
+This project presents an end-to-end quantitative machine learning framework designed to predict stock market trends and financial risks for the S&P 500 dataset (all_stocks_5yr.csv). Throughout the milestones, we focused on maintaining data integrity, rigorous exploratory analysis, robust feature engineering, and proper financial data scaling without distorting real-world economic behavior or causing data leakage.
 
-## Project Overview
-This project aims to predict stock market trends and financial risks for the S&P 500 dataset using advanced machine learning and data science techniques. Throughout the milestones, we focused on maintaining data integrity, rigorous exploratory analysis, and proper financial data engineering without distorting real-world economic behavior.
+ Project Team (Group 5)
+Qusai Rahhal (Project Lead / AI Developer) – GitHub Profile
 
----
+Ghufran Almeqbel – https://github.com/GhufranAlmeqbel
 
-##  Milestone 1: Dataset Selection, Understanding & Initial Exploration
-In the first milestone, we laid the foundation of the project:
-- **Dataset Selection:** Selected the historical `all_stocks_5yr.csv` dataset, which captures daily stock data (Open, High, Low, Close, Volume, and Stock Name).
-- **Initial Data Exploration (EDA):** 
-  - Inspected dataset structure, dimensions, and statistical distributions using `df.info()` and `df.describe()`.
-  - Defined the business and analytical goals of predicting trends and assessing financial volatility across major equities.
+Raghad Al-Hindi – 
 
----
+Tasneem Mazrawe –
 
-##  Milestone 2: Data Understanding, Cleaning & Preprocessing
-In this stage, we focused on rigorous data quality analysis, type corrections, defensive programming, and principled handling of financial anomalies:
+Sajeda Ibrahem – https://github.com/sajeda7765
 
-### 1. Data Type Corrections & Defensive Handling
-- **Code Implemented:** 
-  ```python
-  df['date'] = pd.to_datetime(df['date'], errors='coerce')
-##  Milestone 3: Exploratory Data Analysis (EDA) & Feature Engineering & Preprocessing Pipeline
-## Exploratory Data Analysis (EDA) & Feature Engineering
+ Milestone 1: Dataset Selection, Understanding & Initial Exploration
+Dataset Selection: Utilized the historical all_stocks_5yr.csv dataset covering 5 years of daily trading data across major equities (Open, High, Low, Close, Volume, and Stock Name).
 
-In this phase, we performed comprehensive Exploratory Data Analysis (EDA) on the S&P 500 daily stock dataset (`all_stocks_5yr.csv`) and applied rigorous feature engineering and preprocessing techniques tailored for financial time-series data.
+Initial Data Exploration (EDA): Inspected dataset structure, dimensions, and statistical summaries using df.info() and df.describe().
 
-### 1. Exploratory Data Analysis (EDA) & Visualizations
-* **Correlation Matrix Heatmap:** Analyzed feature collinearity, verifying a 100% positive correlation among Open, High, Low, and Close prices, while confirming that trading volume and engineered features provide independent market dynamics without multicollinearity issues.
-* **Distribution of Closing Prices (Histogram & KDE):** Discovered a right-skewed distribution where most closing prices concentrate below $200, justifying the retention of high-value market outliers as true structural market shocks.
-* **Daily Price Range vs. Trading Volume (Scatter Plot):** Visualized the relationship between market volatility (`Price_Range`) and liquidity (`Volume`), identifying major market spikes and high-volume trading days.
-* **Stock Price Trend Over Time (Line Chart):** Inspected chronological price movements (e.g., Stock 'A') to reinforce the absolute necessity of maintaining temporal order without data shuffling.
-* **Top Stocks Analysis (Column & Bar Charts):** Highlighted top-performing companies by average trading volume (e.g., `BAC`, `AAPL`) and daily price range to evaluate market activity and risk.
-* **Target Distribution (Pie Chart):** Verified a well-balanced binary classification distribution for the target variable (~52.1% Down, ~47.9% Up).
+ Milestone 2: Data Understanding, Cleaning & Preprocessing
+Data Type Corrections: Converted date columns from string/object format to proper chronological datetime64 using pd.to_datetime(..., errors='coerce').
 
-### 2. Feature Engineering & Preprocessing Pipeline
-To prepare the dataset for robust machine learning classification, the following steps were executed:
-* **Chronological Sorting:** Converted date fields and sorted records strictly by stock name (`Name`) and date to preserve time-series integrity.
-* **Financial Feature Engineering:**
-  * Created `Price_Range` (`High - Low`) to capture intraday volatility.
-  * Created `Daily_Change` (`Close - Open`) to measure daily momentum.
-  * Engineered a **10-day Moving Average (`avg_close_10d`)** using a rolling window per stock combined with `shift(1)` to strictly prevent data leakage from the current day.
-  * Created a **Trend Indicator (`trend_10d`)** representing the difference between the closing price and its 10-day moving average.
-* **Target Variable Creation:** Transformed continuous price forecasting into a binary classification task (`Target`: 1 for Up, 0 for Down) using group shifts (`shift(-1)`).
-* **Cross-Entity Independence (GroupBy):** Applied all rolling and shift operations strictly via `groupby('Name')` to ensure each stock is treated as an independent economic entity without cross-contamination.
-* **Data Cleaning & Integrity (`dropna`):** Removed initial 10-day rolling windows per stock and final historical records lacking ground truth, ensuring 100% consistent memory windows and clean training data.
-* **Encoding & Chronological Split:** Encoded stock tickers using `LabelEncoder` and split the dataset 80/20 with `shuffle=False` to respect the chronological nature of financial markets.
-* **Safe Feature Scaling:** Applied `StandardScaler` via `fit_transform` exclusively on training data and `transform` on testing data to eliminate data leakage.
+Missing Value Treatment: Identified a minimal number of missing/null entries and safely dropped those rows, ensuring zero negative impact on predictions.
+
+Outlier Preservation: Deliberately avoided IQR clipping or removal. In financial markets, extreme price spikes and volume surges reflect genuine volatility regime shifts and tail-risk events that models must learn from.
+
+ Milestone 3: Exploratory Data Analysis (EDA), Feature Engineering & Preprocessing Pipeline
+1. Exploratory Data Analysis (EDA) & Visualizations
+Correlation Matrix Heatmap: Analyzed feature collinearity and verified initial feature interactions.
+
+Distribution of Closing Prices: Discovered a right-skewed price distribution, justifying the retention of high-value market outliers.
+
+Daily Price Range vs. Trading Volume: Visualized market volatility (Price_Range) against liquidity (Volume).
+
+Stock Price Trend Over Time: Inspected chronological price movements ensuring temporal order is respected.
+
+Top Stocks Analysis: Highlighted top-performing companies by trading volume (BAC, AAPL) and daily price range (PCLN, REGN).
+
+2. Feature Engineering, API Integration & Preprocessing Pipeline
+Chronological Sorting: Sorted records strictly by stock name (Name) and date.
+
+External Market Data API Integration (yfinance): Programmatically fetched benchmark index data via the yfinance library matching exact dataset timeframes (min() to max()) to compute and integrate general market returns (Market_Return).
+
+Financial Feature Engineering:
+
+Price_Range (High - Low) for intraday volatility.
+
+Daily_Change (Close - Open) for daily momentum.
+
+10-day Moving Average (avg_close_10d) and Trend Indicator (trend_10d) computed strictly per stock using group operations.
+
+Technical indicators including RSI, MACD, Bollinger Bands Width (BB_Width), ATR, and Price_Slope.
+
+Lagged returns (Return_1d, Return_2d, Return_5d) and Volume_Ratio.
+
+Cross-Entity Independence (GroupBy): Applied rolling and shift operations via groupby('Name') to prevent cross-contamination.
+
+Chronological Split & Scaling: Applied StandardScaler exclusively on training data and TimeSeriesSplit cross-validation to strictly prevent Data Leakage.
+
+ Milestone 4: Model Benchmarking & Results
+Four major regression/classification algorithms were benchmarked to forecast multi-day returns:
+
+Ridge Regression (L2 Regularized Baseline)
+
+Random Forest Regressor (Bagging Ensemble)
+
+XGBoost Regressor (Gradient Boosting)
+
+CatBoost Regressor (Ordered Boosting)
+
+Final Performance Metrics Summary:
+Random Forest (Winner): MAE = 0.015404 | RMSE = 0.023091 (Superior stability, noise damping via bagging, and optimal capture of non-linear market shifts).
+
+Ensemble (Voting): MAE = 0.015582 | RMSE = 0.023269
+
+XGBoost: MAE = 0.015714 | RMSE = 0.023444
+
+CatBoost: MAE = 0.015789 | RMSE = 0.023545
+
+Ridge Regression: MAE = 0.016040 | RMSE = 0.023865
+
+ Future Enhancements
+Integrate NLP sentiment analysis on financial news and earnings calls.
+
+Explore deep learning architectures (LSTM / Transformers) for sequential time-series modeling.
+
+Deploy real-time live trading APIs for automated signal generation.
